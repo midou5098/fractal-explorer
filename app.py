@@ -9,12 +9,14 @@ con = {
         3: (255, 192, 203),
         4: (255, 0, 0),      
         5: (255, 215, 0),    
-        6: (255, 255, 255),  
+        6: (255, 255, 255),
+        7:(140,60,200),
+        8:(70,140,80)
     }
-COLOR_TABLE = np.array([con[i] for i in range(7)], dtype=np.uint8)
+COLOR_TABLE = np.array([con[i] for i in range(9)], dtype=np.uint8)
 # due to the fuckass fractal calling a fonction 190k times to render a damn page , i m resorting to numpy arrays for c speed.
-MAX=100
-def mandel_nump(left,right,bottom,top,width,height,MAX=100):
+MAX=200
+def mandel_nump(left,right,bottom,top,width,height,MAX=200):
     real=np.linspace(left,right,width)
     imag=np.linspace(bottom,top,height)
     X,Y=np.meshgrid(real,imag)
@@ -26,19 +28,57 @@ def mandel_nump(left,right,bottom,top,width,height,MAX=100):
         Z[mask]=Z[mask]*Z[mask] + C[mask]
         mandel[mask]+=1
     result=np.zeros_like(mandel)
-    result = (mandel % 7).astype(np.uint8) 
+    result = (mandel % 9).astype(np.uint8) 
     result[mandel == MAX] = 0
     return result.astype(np.uint8)
 def render_mandel(screen,left,right,bottom,top,width,height):
     result=mandel_nump(left,right,bottom,top,width,height,MAX=100)
     surface=pygame.Surface((width,height))
-
-    
     rgb_array = COLOR_TABLE[result]
     surface = pygame.surfarray.make_surface(np.transpose(rgb_array, (1, 0, 2)))
     screen.blit(surface,(0,0))
     
     return surface
+def render_julia(screen,left,right,bottom,top,width,height):
+    result=julia_nump(left,right,bottom,top,width,height,MAX=200)
+    surface=pygame.Surface((width,height))
+    rgb_array = COLOR_TABLE[result]
+    surface = pygame.surfarray.make_surface(np.transpose(rgb_array, (1, 0, 2)))
+    screen.blit(surface,(0,0))
+    
+    return surface
+def julia_nump(left,right,bottom,top,width,height,MAX=200):
+    real=np.linspace(left,right,width)
+    imag=np.linspace(bottom,top,height)
+    X,Y=np.meshgrid(real,imag)
+    C= -0.7+0.27015j
+    Z= X + 1j * Y
+    mandel=np.zeros(Z.shape,dtype=np.int32)
+    for i in range (MAX):
+        mask=np.abs(Z)<=2
+        Z[mask]=Z[mask]*Z[mask] + C
+        mandel[mask]+=1
+    result=np.zeros_like(mandel)
+    result = (mandel % 9).astype(np.uint8) 
+    result[mandel == MAX] = 0
+    return result.astype(np.uint8)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
 
 
 
@@ -171,12 +211,17 @@ while True:
                         right=2.16
                         up=1.5
                         down=-1.5
+                    if s=="julia":
+                        left=-3.16
+                        right=2.16
+                        up=1.5
+                        down=-1.5
             txt=font.render(f"current set : {s}",True,WHITE)
             txtr=font.render(intsr,True,WHITE)
             txtr1=font.render(instr1,True,WHITE)
             txtr2=font.render(instr2,True,WHITE)
             
-        elif mode==1:
+        elif mode!=0:
             
             if event.type==pygame.KEYDOWN:
                 vert = 0.1 * (up - down)
@@ -226,7 +271,10 @@ while True:
     if fractal_surface:
         screen.blit(fractal_surface, (0, 0)) 
     if needs_render:
-                fractal_surface = render_mandel(screen, left, right,down,up, WINDOW_WIDTH, WINDOW_HEIGHT)
+                if s=="mandelbrot":
+                    fractal_surface = render_mandel(screen, left, right,down,up, WINDOW_WIDTH, WINDOW_HEIGHT)
+                elif s=="julia":
+                    fractal_surface = render_julia(screen, left, right,down,up, WINDOW_WIDTH, WINDOW_HEIGHT)
                 needs_render = False    
     
 
