@@ -63,3 +63,31 @@ class Button:
     def set_text(self, new_text):
         """Change button text"""
         self.text = new_text
+
+
+
+
+
+
+
+def mandel(x,y):
+    i=0
+    Z=0
+    c=complex(x,y)
+    while i<100 and abs(Z)<2:
+        Z=Z*Z + c
+        i+=1
+    if 80<i<=100:
+        return 6
+    elif 0<=i<=10:
+        return 1
+    elif 10<i<=20:
+        return 2
+    elif 20<i<=40:
+        return 3
+    elif 40<i<=60:
+        return 4
+    elif 60<i<=80:
+        return 5
+
+
