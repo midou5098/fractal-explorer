@@ -48,8 +48,7 @@ from source import Button,mandel_nump,render_mandel,julia_nump,render_julia
 
 
 
-
-
+animation_time=0
 
 
 
@@ -154,10 +153,10 @@ while True:
                         up=1.5
                         down=-1.5
                     if s=="julia":
-                        left=-3.16
-                        right=2.16
-                        up=1.5
-                        down=-1.5
+                        left = -2.0
+                        right = 2.0
+                        up = 2.0
+                        down = -2.0
             txt=font.render(f"current set : {s}",True,WHITE)
             txtr=font.render(intsr,True,WHITE)
             txtr1=font.render(instr1,True,WHITE)
@@ -216,7 +215,8 @@ while True:
                 if s=="mandelbrot":
                     fractal_surface = render_mandel(screen, left, right,down,up, WINDOW_WIDTH, WINDOW_HEIGHT)
                 elif s=="julia":
-                    fractal_surface = render_julia(screen, left, right,down,up, WINDOW_WIDTH, WINDOW_HEIGHT)
+                    animation_time += 0.01
+                    fractal_surface = render_julia(screen, left, right,down,up, WINDOW_WIDTH, WINDOW_HEIGHT,animation_time)
                 needs_render = False    
     
 

@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-import sys
+import time
 #disclaimer : this button set is ai generated , got bigger fish to fry than designing a button class for 5 hours..
 class Button:
     def __init__(self, x, y, width, height, text, color, hover_color, text_color=pygame.Color('white')):
@@ -103,19 +103,19 @@ def render_mandel(screen,left,right,bottom,top,width,height):
     screen.blit(surface,(0,0))
     
     return surface
-def render_julia(screen,left,right,bottom,top,width,height):
-    result=julia_nump(left,right,bottom,top,width,height,MAX=200)
+def render_julia(screen,left,right,bottom,top,width,height,animation_time):
+    result=julia_nump(left,right,bottom,top,width,height,animation_time,MAX=200)
     surface=pygame.Surface((width,height))
     rgb_array = COLOR_TABLE[result]
     surface = pygame.surfarray.make_surface(np.transpose(rgb_array, (1, 0, 2)))
     screen.blit(surface,(0,0))
     
     return surface
-def julia_nump(left,right,bottom,top,width,height,MAX=200):
+def julia_nump(left,right,bottom,top,width,height,animation_time,MAX=200):
     real=np.linspace(left,right,width)
     imag=np.linspace(bottom,top,height)
     X,Y=np.meshgrid(real,imag)
-    C= -0.7+0.27015j
+    C = -0.8 + (animation_time * 0.01) + 0.2j
     Z= X + 1j * Y
     mandel=np.zeros(Z.shape,dtype=np.int32)
     for i in range (MAX):
